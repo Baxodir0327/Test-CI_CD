@@ -1,0 +1,68 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    name: first
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Build ketmon
+        run: |
+          echo "Hello build"
+          mkdir b29 
+          touch b29/test.txt
+          echo >> "bolta"
+          cat b29/test.txt
+        working-directory: ${{ github.workspace }}
+      
+      - name: Archive artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: b29-artifact
+          path: b29
+
+  test:
+    runs-on: ubuntu-latest
+    name: second
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Test ketmon
+        run: |
+          echo "Hello test"
+          test -f b29/test.txt
+        working-directory: ${{ github.workspace }}
+      
+      - name: Download artifacts
+        uses: actions/download-artifact@v2
+        with:
+          name: b29-artifact
+          path: b29
+
+  deploy:
+    runs-on: ubuntu-latest
+    name: third
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Deploy ketmon
+        run: echo "Hello deploy"
+        working-directory: ${{ github.workspace }}
+      
+      - name: Download artifacts
+        uses: actions/download-artifact@v2
+        with:
+          name: b29-artifact
+          path: b29
